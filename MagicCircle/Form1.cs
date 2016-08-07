@@ -60,7 +60,7 @@ namespace MagicCircle
 
             MC_Orb child5 = new MC_Orb()
             {
-                radius = 6,
+                radius = 10,
                 distance_from_center = 17,
                 rotation_amount = 5
             };
@@ -73,9 +73,12 @@ namespace MagicCircle
             };
 
             magic.AddChild(child1);
-            magic.AddChild(child6);
             child6.AddChild(child5);
+            magic.AddChild(child6);
+            //child6.AddChild(child5);
             magic.AddChild(child4);
+
+            magic.CalcChildCenter();//これによって追加した順番に依存していた初期中心座標が正しい座標に再設定される
         }
 
         MC magic = new MC();
@@ -112,6 +115,12 @@ namespace MagicCircle
             child.center_y = center.Y;
             child.owner = this;
             this.child.Add(child);
+        }
+
+        public void CalcChildCenter()
+        {
+            if (this.child != null)
+                this.child.ForEach(d => d.UpdateCenter());
         }
 
         public PointF GetPosition()
