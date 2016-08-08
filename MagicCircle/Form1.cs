@@ -85,10 +85,11 @@ namespace MagicCircle
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            var g = pictureBox1.CreateGraphics();
-            g.Clear(Color.White);
             magic.Tick();
-            magic.Draw(g);
+            var g = pictureBox1.CreateGraphics();
+            var DoubleBufferedImage = magic.DrawDoubleBuffer(pictureBox1.Width, pictureBox1.Height);
+            g.DrawImage(DoubleBufferedImage, 0, 0);
+            g.Dispose();
         }
     }
 
@@ -167,7 +168,17 @@ namespace MagicCircle
                 g.DrawEllipse(Pens.Red, pos.X - this.radius, pos.Y - this.radius, this.radius * 2, this.radius * 2);
             if (this.child != null)
                 this.child.ForEach(d => d.Draw(g));
-            
+        }
+
+        public Bitmap DrawDoubleBuffer(int width, int height)
+        {
+            Bitmap doubleBuffering_bitmap = new Bitmap(width, height);
+            Graphics doubleBuffering_g = Graphics.FromImage(doubleBuffering_bitmap);
+            doubleBuffering_g.Clear(Color.White);
+
+            Draw(doubleBuffering_g);
+
+            return doubleBuffering_bitmap;
         }
     }
 
