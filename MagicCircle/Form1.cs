@@ -69,11 +69,31 @@ namespace MagicCircle
             {
                 radius = 5,
                 distance_from_center = 57,
-                rotation_amount = -1
+                rotation_amount = -1,
+                color=Brushes.Transparent
+            };
+
+            MC_Tail child7 = new MC_Tail()
+            {
+                radius = 7,
+                distance_from_center = 17,
+                rotation_amount = 5,
+                reduction_rate = 0.96f,
+                tail_length = 40,
+                fill = true,
+            };
+            MC_Tail child8 = new MC_Tail()
+            {
+                radius = 5,
+                distance_from_center = 57,
+                rotation_amount = 1,
+                reduction_rate = 1,
+                tail_length = 20,
+                fill = true
             };
 
             magic.AddChild(child1);
-            child6.AddChild(child5);
+            child6.AddChild(child7);
             magic.AddChild(child6);
             //child6.AddChild(child5);
             magic.AddChild(child4);
@@ -89,6 +109,7 @@ namespace MagicCircle
             var g = pictureBox1.CreateGraphics();
             var DoubleBufferedImage = magic.DrawDoubleBuffer(pictureBox1.Width, pictureBox1.Height);
             g.DrawImage(DoubleBufferedImage, 0, 0);
+            DoubleBufferedImage.Dispose();
             g.Dispose();
         }
     }
@@ -178,12 +199,15 @@ namespace MagicCircle
 
             Draw(doubleBuffering_g);
 
+            doubleBuffering_g.Dispose();
             return doubleBuffering_bitmap;
         }
     }
 
     public class MC_Orb : MC
     {
+        public Brush color { get; set; }
+
         public override void Tick()
         {
             Rotate();
@@ -193,7 +217,44 @@ namespace MagicCircle
         public override void Draw(Graphics g)
         {
             PointF pos = GetPosition();
-            g.FillEllipse(Brushes.Green, pos.X - this.radius, pos.Y - this.radius, this.radius * 2, this.radius * 2);
+            g.FillEllipse(this.color == null ? Brushes.Green : this.color, pos.X - this.radius, pos.Y - this.radius, this.radius * 2, this.radius * 2);
+            if (this.child != null)
+                this.child.ForEach(d => d.Draw(g));
+        }
+    }
+
+    public class MC_Tail : MC
+    {
+        public List<PointF> tail { get; set; }
+        public float reduction_rate { get; set; }
+        public int tail_length { get; set; }
+        public bool fill { get; set; }
+        public object color { get; set; }
+
+        public override void Tick()
+        {
+            Rotate();
+            if (this.child != null)
+                this.child.ForEach(d => d.Tick());
+        }
+
+        public override void Draw(Graphics g)
+        {
+            PointF pos = GetPosition();
+            if (this.tail == null)
+                this.tail = new List<PointF>();
+            this.tail.Add(new PointF(pos.X, pos.Y));
+            if (this.tail.Count > tail_length)
+                this.tail.RemoveAt(0);
+            float radius = this.radius;
+            foreach (PointF p in this.tail.Reverse<PointF>())
+            {
+                if (this.fill)
+                    g.FillEllipse(this.color == null ? Brushes.Green : (Brush)this.color, p.X - radius, p.Y - radius, radius * 2, radius * 2);
+                else
+                    g.DrawEllipse(this.color == null ? Pens.Green : (Pen)this.color, p.X - radius, p.Y - radius, radius * 2, radius * 2);
+                radius *= this.reduction_rate;
+            }
             if (this.child != null)
                 this.child.ForEach(d => d.Draw(g));
         }
