@@ -91,9 +91,17 @@ namespace MagicCircle
                 tail_length = 20,
                 fill = true
             };
+            MC_Star child9 = new MC_Star()
+            {
+                radius = 30,
+                rotate = true,
+                rotation_amount = 5,
+                color = Pens.Cyan,
+                has_frame = true
+            };
 
             magic.AddChild(child1);
-            child6.AddChild(child7);
+            child6.AddChild(child9);
             magic.AddChild(child6);
             //child6.AddChild(child5);
             magic.AddChild(child4);
@@ -255,6 +263,39 @@ namespace MagicCircle
                     g.DrawEllipse(this.color == null ? Pens.Green : (Pen)this.color, p.X - radius, p.Y - radius, radius * 2, radius * 2);
                 radius *= this.reduction_rate;
             }
+            if (this.child != null)
+                this.child.ForEach(d => d.Draw(g));
+        }
+    }
+
+    public class MC_Star : MC
+    {
+        public Pen color { get; set; }
+
+        public override void Draw(Graphics g)
+        {
+            //distance_from_center = 0
+            List<float> vertex_theta = new float[] { 0, 72, 144, 216, 288 }.ToList();
+            for (int i = 0; i < vertex_theta.Count; i++)
+                vertex_theta[i] = vertex_theta[i] - 90 + this.rotation;
+            this.distance_from_center = this.radius;
+            float backup_rotation = this.rotation;
+            var vertex_points = vertex_theta.Select(d =>
+            {
+                this.rotation = d;
+                return GetPosition();
+            }).ToArray();
+            this.rotation = backup_rotation;
+            for (int i = 0; i < vertex_theta.Count; i++)
+            {
+                int start_index = i;
+                int end_index = i + 2;
+                if (end_index >= vertex_theta.Count)
+                    end_index -= vertex_theta.Count;
+                g.DrawLine(this.color == null ? Pens.YellowGreen : this.color, vertex_points[start_index], vertex_points[end_index]);
+            }
+            if (this.has_frame)
+                g.DrawEllipse(this.color == null ? Pens.Yellow : this.color, center_x - this.radius, center_y - this.radius, this.radius * 2, this.radius * 2);
             if (this.child != null)
                 this.child.ForEach(d => d.Draw(g));
         }
