@@ -70,7 +70,7 @@ namespace MagicCircle
                 radius = 5,
                 distance_from_center = 57,
                 rotation_amount = -1,
-                color=Brushes.Transparent
+                color = Color.Transparent
             };
 
             MC_Tail child7 = new MC_Tail()
@@ -96,7 +96,7 @@ namespace MagicCircle
                 radius = 30,
                 rotate = true,
                 rotation_amount = 5,
-                color = Pens.Cyan,
+                color = Color.Cyan,
                 has_frame = true
             };
 
@@ -119,8 +119,22 @@ namespace MagicCircle
             g.DrawImage(DoubleBufferedImage, 0, 0);
             DoubleBufferedImage.Dispose();
             g.Dispose();
+            
         }
     }
+
+    //半径
+    //中心からの距離
+    //回転の有無
+    //回転量
+    //初期角度
+    //フレームの有無
+    //
+    //色
+    //縮小率
+    //尾の長さ
+    //塗りつぶし
+    //
 
     public class MC
     {
@@ -133,7 +147,9 @@ namespace MagicCircle
         public float rotation { get; set; }
         public float rotation_amount { get; set; }
         public bool has_frame { get; set; }
+        public Color color { get; set; }
         public List<MC> child { get; set; }
+
 
         public void AddChild(MC child)
         {
@@ -193,8 +209,9 @@ namespace MagicCircle
         public virtual void Draw(Graphics g)
         {
             PointF pos = GetPosition();
+            Pen pen = new Pen(this.color == Color.Empty ? Color.Red : this.color);
             if (this.has_frame)
-                g.DrawEllipse(Pens.Red, pos.X - this.radius, pos.Y - this.radius, this.radius * 2, this.radius * 2);
+                g.DrawEllipse(pen, pos.X - this.radius, pos.Y - this.radius, this.radius * 2, this.radius * 2);
             if (this.child != null)
                 this.child.ForEach(d => d.Draw(g));
         }
@@ -214,8 +231,6 @@ namespace MagicCircle
 
     public class MC_Orb : MC
     {
-        public Brush color { get; set; }
-
         public override void Tick()
         {
             Rotate();
@@ -225,7 +240,8 @@ namespace MagicCircle
         public override void Draw(Graphics g)
         {
             PointF pos = GetPosition();
-            g.FillEllipse(this.color == null ? Brushes.Green : this.color, pos.X - this.radius, pos.Y - this.radius, this.radius * 2, this.radius * 2);
+            Brush brush = new SolidBrush(this.color == Color.Empty ? Color.LightGreen : this.color);
+            g.FillEllipse(brush, pos.X - this.radius, pos.Y - this.radius, this.radius * 2, this.radius * 2);
             if (this.child != null)
                 this.child.ForEach(d => d.Draw(g));
         }
@@ -237,7 +253,6 @@ namespace MagicCircle
         public float reduction_rate { get; set; }
         public int tail_length { get; set; }
         public bool fill { get; set; }
-        public object color { get; set; }
 
         public override void Tick()
         {
@@ -255,12 +270,17 @@ namespace MagicCircle
             if (this.tail.Count > tail_length)
                 this.tail.RemoveAt(0);
             float radius = this.radius;
+            object color = null;
+            if (this.fill)
+                color = this.color == Color.Empty ? Brushes.LightGreen : new SolidBrush(this.color);
+            else
+                color = this.color == Color.Empty ? Pens.LightGreen : new Pen(this.color);
             foreach (PointF p in this.tail.Reverse<PointF>())
             {
                 if (this.fill)
-                    g.FillEllipse(this.color == null ? Brushes.Green : (Brush)this.color, p.X - radius, p.Y - radius, radius * 2, radius * 2);
+                    g.FillEllipse((Brush)color, p.X - radius, p.Y - radius, radius * 2, radius * 2);
                 else
-                    g.DrawEllipse(this.color == null ? Pens.Green : (Pen)this.color, p.X - radius, p.Y - radius, radius * 2, radius * 2);
+                    g.DrawEllipse((Pen)color, p.X - radius, p.Y - radius, radius * 2, radius * 2);
                 radius *= this.reduction_rate;
             }
             if (this.child != null)
@@ -270,8 +290,6 @@ namespace MagicCircle
 
     public class MC_Star : MC
     {
-        public Pen color { get; set; }
-
         public override void Draw(Graphics g)
         {
             //distance_from_center = 0
@@ -286,16 +304,17 @@ namespace MagicCircle
                 return GetPosition();
             }).ToArray();
             this.rotation = backup_rotation;
+            Pen pen = new Pen(this.color == Color.Empty ? Color.YellowGreen : this.color);
             for (int i = 0; i < vertex_theta.Count; i++)
             {
                 int start_index = i;
                 int end_index = i + 2;
                 if (end_index >= vertex_theta.Count)
                     end_index -= vertex_theta.Count;
-                g.DrawLine(this.color == null ? Pens.YellowGreen : this.color, vertex_points[start_index], vertex_points[end_index]);
+                g.DrawLine(pen, vertex_points[start_index], vertex_points[end_index]);
             }
             if (this.has_frame)
-                g.DrawEllipse(this.color == null ? Pens.Yellow : this.color, center_x - this.radius, center_y - this.radius, this.radius * 2, this.radius * 2);
+                g.DrawEllipse(pen, center_x - this.radius, center_y - this.radius, this.radius * 2, this.radius * 2);
             if (this.child != null)
                 this.child.ForEach(d => d.Draw(g));
         }
