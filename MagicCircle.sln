@@ -5,6 +5,8 @@ VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagicCircle", "MagicCircle\MagicCircle.csproj", "{A8AE4739-6912-4A3E-BD3D-24FAFF9524BC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagicCircleMaker", "MagicCircleMaker\MagicCircleMaker.csproj", "{817610E8-1040-42E7-AE4A-2B0E97AA89C1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{A8AE4739-6912-4A3E-BD3D-24FAFF9524BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A8AE4739-6912-4A3E-BD3D-24FAFF9524BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A8AE4739-6912-4A3E-BD3D-24FAFF9524BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{817610E8-1040-42E7-AE4A-2B0E97AA89C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{817610E8-1040-42E7-AE4A-2B0E97AA89C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{817610E8-1040-42E7-AE4A-2B0E97AA89C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{817610E8-1040-42E7-AE4A-2B0E97AA89C1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
