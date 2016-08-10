@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -58,6 +59,7 @@
             this.numericUpDown6 = new System.Windows.Forms.NumericUpDown();
             this.label7 = new System.Windows.Forms.Label();
             this.checkBox3 = new System.Windows.Forms.CheckBox();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -84,6 +86,7 @@
             this.treeView1.Name = "treeView1";
             this.treeView1.Size = new System.Drawing.Size(197, 292);
             this.treeView1.TabIndex = 1;
+            this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
             // 
             // groupBox1
             // 
@@ -110,6 +113,7 @@
             this.button8.TabIndex = 4;
             this.button8.Text = "ノードを親の階層に接続する";
             this.button8.UseVisualStyleBackColor = true;
+            this.button8.Click += new System.EventHandler(this.button8_Click);
             // 
             // button4
             // 
@@ -122,6 +126,7 @@
             this.button4.TabIndex = 3;
             this.button4.Text = "ノードを削除";
             this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
             // button2
             // 
@@ -134,6 +139,7 @@
             this.button2.TabIndex = 1;
             this.button2.Text = "ノードを追加";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // button1
             // 
@@ -146,6 +152,7 @@
             this.button1.TabIndex = 0;
             this.button1.Text = "子ノードを追加";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // groupBox2
             // 
@@ -169,6 +176,7 @@
             this.button7.TabIndex = 2;
             this.button7.Text = "リセット";
             this.button7.UseVisualStyleBackColor = true;
+            this.button7.Click += new System.EventHandler(this.button7_Click);
             // 
             // button6
             // 
@@ -179,6 +187,7 @@
             this.button6.TabIndex = 1;
             this.button6.Text = "停止";
             this.button6.UseVisualStyleBackColor = true;
+            this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
             // button5
             // 
@@ -189,6 +198,7 @@
             this.button5.TabIndex = 0;
             this.button5.Text = "再生";
             this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
             // groupBox3
             // 
@@ -255,6 +265,7 @@
             0,
             0,
             65536});
+            this.numericUpDown1.ValueChanged += new System.EventHandler(this.numericUpDown1_ValueChanged);
             // 
             // numericUpDown2
             // 
@@ -285,6 +296,7 @@
             0,
             0,
             65536});
+            this.numericUpDown2.ValueChanged += new System.EventHandler(this.numericUpDown2_ValueChanged);
             // 
             // label2
             // 
@@ -304,6 +316,7 @@
             this.checkBox1.TabIndex = 7;
             this.checkBox1.Text = "Rotate";
             this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // numericUpDown3
             // 
@@ -334,6 +347,7 @@
             0,
             0,
             65536});
+            this.numericUpDown3.ValueChanged += new System.EventHandler(this.numericUpDown3_ValueChanged);
             // 
             // label3
             // 
@@ -373,6 +387,7 @@
             0,
             0,
             65536});
+            this.numericUpDown4.ValueChanged += new System.EventHandler(this.numericUpDown4_ValueChanged);
             // 
             // label4
             // 
@@ -392,16 +407,18 @@
             this.checkBox2.TabIndex = 12;
             this.checkBox2.Text = "Has Frame";
             this.checkBox2.UseVisualStyleBackColor = true;
+            this.checkBox2.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged);
             // 
             // button9
             // 
-            this.button9.Font = new System.Drawing.Font("Consolas", 9F);
+            this.button9.Font = new System.Drawing.Font("Consolas", 8F);
             this.button9.Location = new System.Drawing.Point(76, 252);
             this.button9.Name = "button9";
             this.button9.Size = new System.Drawing.Size(106, 34);
             this.button9.TabIndex = 13;
             this.button9.Text = "(0, 0, 0)";
             this.button9.UseVisualStyleBackColor = true;
+            this.button9.Click += new System.EventHandler(this.button9_Click);
             // 
             // label5
             // 
@@ -442,6 +459,7 @@
             0,
             65536});
             this.numericUpDown5.Visible = false;
+            this.numericUpDown5.ValueChanged += new System.EventHandler(this.numericUpDown5_ValueChanged);
             // 
             // label6
             // 
@@ -483,6 +501,7 @@
             0,
             65536});
             this.numericUpDown6.Visible = false;
+            this.numericUpDown6.ValueChanged += new System.EventHandler(this.numericUpDown6_ValueChanged);
             // 
             // label7
             // 
@@ -504,6 +523,11 @@
             this.checkBox3.Text = "Fill color";
             this.checkBox3.UseVisualStyleBackColor = true;
             this.checkBox3.Visible = false;
+            this.checkBox3.CheckedChanged += new System.EventHandler(this.checkBox3_CheckedChanged);
+            // 
+            // timer1
+            // 
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // Form1
             // 
@@ -565,6 +589,7 @@
         private System.Windows.Forms.NumericUpDown numericUpDown6;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.CheckBox checkBox3;
+        private System.Windows.Forms.Timer timer1;
     }
 }
 
