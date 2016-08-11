@@ -17,6 +17,10 @@ namespace MagicCircleMaker
             InitializeComponent();
 
             comboBox1.SelectedIndex = 0;
+
+            setControl_Rotation_Amount(false);
+            setControl_Initial_Rotation(false);
+
         }
 
         public void setControl_Distance_from_center(bool enable, float value = 0)
@@ -101,6 +105,7 @@ namespace MagicCircleMaker
                     setControl_Fill_Color(true);
                     break;
                 case 3:
+                case 4:
                     setControl_Distance_from_center(false, 0);
                     setControl_Rotate(true);
                     setControl_Has_Frame(true);
@@ -169,6 +174,28 @@ namespace MagicCircleMaker
                         reduction_rate = decimal.ToSingle(numericUpDown5.Value),
                         tail_length = decimal.ToInt32(numericUpDown6.Value),
                         fill = checkBox3.Checked
+                    };
+                    break;
+                case 3:
+                    this.result = new MC_Star()
+                    {
+                        color = this.color,
+                        has_frame = checkBox2.Checked,
+                        radius = decimal.ToSingle(numericUpDown1.Value),
+                        rotate = checkBox1.Checked,
+                        rotation = decimal.ToSingle(numericUpDown4.Value),
+                        rotation_amount = decimal.ToSingle(numericUpDown3.Value)
+                    };
+                    break;
+                case 4:
+                    this.result = new MC_Hexagram()
+                    {
+                        color = this.color,
+                        has_frame = checkBox2.Checked,
+                        radius = decimal.ToSingle(numericUpDown1.Value),
+                        rotate = checkBox1.Checked,
+                        rotation = decimal.ToSingle(numericUpDown4.Value),
+                        rotation_amount = decimal.ToSingle(numericUpDown3.Value)
                     };
                     break;
             }

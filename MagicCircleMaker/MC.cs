@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 
 namespace MagicCircleMaker
 {
-    public class MC
+    public class MC : ICloneable
     {
+        public string name { get; set; }
         public MC owner { get; set; }
         public float center_x { get; set; }
         public float center_y { get; set; }
@@ -20,6 +21,27 @@ namespace MagicCircleMaker
         public bool has_frame { get; set; }
         public Color color { get; set; }
         public List<MC> child { get; set; }
+
+        public MC()
+        {
+
+        }
+
+        public MC(MC mc)
+        {
+            this.name = mc.name;
+            this.owner = mc.owner;
+            this.center_x = mc.center_x;
+            this.center_y = mc.center_y;
+            this.radius = mc.radius;
+            this.distance_from_center = mc.distance_from_center;
+            this.rotate = mc.rotate;
+            this.rotation = mc.rotation;
+            this.rotation_amount = mc.rotation_amount;
+            this.has_frame = mc.has_frame;
+            this.color = mc.color;
+            this.child = mc.child;
+        }
 
 
         public void AddChild(MC child)
@@ -98,10 +120,19 @@ namespace MagicCircleMaker
             doubleBuffering_g.Dispose();
             return doubleBuffering_bitmap;
         }
+
+        public virtual object Clone()
+        {
+            return new MC(this);
+        }
     }
 
     public class MC_Orb : MC
     {
+        public MC_Orb() { }
+
+        public MC_Orb(MC_Orb mc) : base(mc) { }
+
         public override void Tick()
         {
             Rotate();
@@ -116,6 +147,11 @@ namespace MagicCircleMaker
             if (this.child != null)
                 this.child.ForEach(d => d.Draw(g));
         }
+
+        public override object Clone()
+        {
+            return new MC_Orb(this);
+        }
     }
 
     public class MC_Tail : MC
@@ -125,22 +161,38 @@ namespace MagicCircleMaker
         public int tail_length { get; set; }
         public bool fill { get; set; }
 
+        public MC_Tail() { }
+
+        public MC_Tail(MC_Tail mc) : base(mc)
+        {
+            this.tail = mc.tail;
+            this.reduction_rate = mc.reduction_rate;
+            this.tail_length = mc.tail_length;
+            this.fill = mc.fill;
+        }
+
         public override void Tick()
         {
             if (this.rotate)
                 Rotate();
-            if (this.child != null)
-                this.child.ForEach(d => d.Tick());
-        }
-
-        public override void Draw(Graphics g)
-        {
             PointF pos = GetPosition();
             if (this.tail == null)
                 this.tail = new List<PointF>();
             this.tail.Add(new PointF(pos.X, pos.Y));
             if (this.tail.Count > tail_length)
                 this.tail.RemoveAt(0);
+            if (this.child != null)
+                this.child.ForEach(d => d.Tick());
+        }
+
+        public override void Draw(Graphics g)
+        {
+            if (this.tail == null)
+            {
+                this.tail = new List<PointF>();
+                PointF pos = GetPosition();
+                this.tail.Add(new PointF(pos.X, pos.Y));
+            }
             float radius = this.radius;
             object color = null;
             if (this.fill)
@@ -158,10 +210,19 @@ namespace MagicCircleMaker
             if (this.child != null)
                 this.child.ForEach(d => d.Draw(g));
         }
+
+        public override object Clone()
+        {
+            return new MC_Tail(this);
+        }
     }
 
     public class MC_Star : MC
     {
+        public MC_Star() { }
+
+        public MC_Star(MC_Star mc) : base(mc) { }
+
         public override void Draw(Graphics g)
         {
             //distance_from_center = 0
@@ -185,6 +246,53 @@ namespace MagicCircleMaker
                     end_index -= vertex_theta.Count;
                 g.DrawLine(pen, vertex_points[start_index], vertex_points[end_index]);
             }
+            if (this.has_frame)
+                g.DrawEllipse(pen, center_x - this.radius, center_y - this.radius, this.radius * 2, this.radius * 2);
+            if (this.child != null)
+                this.child.ForEach(d => d.Draw(g));
+        }
+
+        public override object Clone()
+        {
+            return new MC_Star(this);
+        }
+    }
+
+    public class MC_Hexagram : MC
+    {
+        public MC_Hexagram() { }
+
+        public MC_Hexagram(MC_Hexagram mc) : base(mc) { }
+
+        public override void Draw(Graphics g)
+        {
+            //distance_from_center = 0
+            List<float> vertex_theta = new float[] { 0, 120, 240 }.ToList();
+            for (int i = 0; i < vertex_theta.Count; i++)
+                vertex_theta[i] = vertex_theta[i] - 90 + this.rotation;
+            this.distance_from_center = this.radius;
+            Pen pen = new Pen(this.color == Color.Empty ? Color.YellowGreen : this.color);
+            for (int j = 0; j < 2; j++)
+            {
+                float backup_rotation = this.rotation;
+                var vertex_points = vertex_theta.Select(d =>
+                {
+                    this.rotation = d;
+                    return GetPosition();
+                }).ToArray();
+                this.rotation = backup_rotation;
+                for (int i = 0; i < vertex_theta.Count; i++)
+                {
+                    int start_index = i;
+                    int end_index = i + 2;
+                    if (end_index >= vertex_theta.Count)
+                        end_index -= vertex_theta.Count;
+                    g.DrawLine(pen, vertex_points[start_index], vertex_points[end_index]);
+                }
+                for (int i = 0; i < vertex_theta.Count; i++)
+                    vertex_theta[i] += 180;
+            }
+
             if (this.has_frame)
                 g.DrawEllipse(pen, center_x - this.radius, center_y - this.radius, this.radius * 2, this.radius * 2);
             if (this.child != null)
