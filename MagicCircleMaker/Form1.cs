@@ -36,6 +36,145 @@ namespace MagicCircleMaker
                 color = Color.Transparent,
                 has_frame = false
             };
+
+            //byte[] hash = new System.Security.Cryptography.SHA512CryptoServiceProvider().ComputeHash(Encoding.UTF8.GetBytes("test"));
+            byte[] hash = new System.Security.Cryptography.SHA512CryptoServiceProvider().ComputeHash(BitConverter.GetBytes(Environment.TickCount));
+
+            int used = Decode_from_Hash(hash, top_node);
+            Console.WriteLine(used);
+
+            foreach (var c in top_node.child)
+            {
+                treeView1.Nodes.Add(c.name, c.GetType().ToString());
+                setTree(treeView1.Nodes[c.name]);
+            }
+        }
+
+        public void setTree(TreeNode node)
+        {
+            var mc = GetCircle(node.Name, top_node);
+            if (mc == null)
+                return;
+            if (mc.child == null)
+                return;
+            if (mc.child.Count == 0)
+                return;
+            foreach (var c in mc.child)
+            {
+                node.Nodes.Add(c.name, c.GetType().ToString());
+                setTree(node.Nodes[c.name]);
+            }
+        }
+
+        public int Decode_from_Hash(byte[] hash, MC target_top)
+        {
+            if (hash == null)
+                return 0;
+            if (hash.Length < 5)
+                return 0;
+            int use = 0;
+            for (; use + 5 < hash.Length; )
+            {
+                //MC, Orb, Tail, Star, Hexagram
+                int type = hash[use] % 5;
+                int seed = BitConverter.ToInt32(hash, use + 1);//1~4
+                use += 5;
+                Random r = new Random(seed);
+                switch (type)
+                {
+                    case 0:
+                    {
+                        var mc = new MC()
+                        {
+                            name = (current_id++).ToString(),
+                            radius = r.Next(1, pictureBox1.Height * 5) / 10.0f,
+                            distance_from_center = r.Next(0, pictureBox1.Height * 5) / 10.0f,
+                            has_frame = r.Next() % 2 == 0,
+                            rotate = r.Next() % 2 == 0,
+                            rotation_amount = r.Next(0, 3599) / 10.0f,
+                            rotation = r.Next(0, 3599) / 10.0f,
+                            color = Color.FromArgb(r.Next(0, 255), r.Next(0, 255), r.Next(0, 255))
+                        };
+                        if (r.Next() % 5 == 0)
+                            use += Decode_from_Hash(hash.Skip(use).ToArray(), mc);
+                        target_top.AddChild(mc);
+                        break;
+                    }
+                    case 1:
+                    {
+                        var mc = new MC_Orb()
+                        {
+                            name = (current_id++).ToString(),
+                            radius = 20,//r.Next(1, pictureBox1.Height * 5) / 10.0f,
+                            distance_from_center = r.Next(0, pictureBox1.Height * 5) / 10.0f,
+                            rotation_amount = r.Next(0, 3599) / 10.0f,
+                            rotation = r.Next(0, 3599) / 10.0f,
+                            color = Color.FromArgb(r.Next(0, 255), r.Next(0, 255), r.Next(0, 255)),
+                        };
+                        if (r.Next() % 5 == 0)
+                            use += Decode_from_Hash(hash.Skip(use).ToArray(), mc);
+                        target_top.AddChild(mc);
+                        break;
+                    }
+                    case 2:
+                    {
+                        var mc = new MC_Tail()
+                        {
+                            name = (current_id++).ToString(),
+                            radius = r.Next(1, 300/*pictureBox1.Height * 5*/) / 10.0f,
+                            distance_from_center = r.Next(0, pictureBox1.Height * 5) / 10.0f,
+                            rotate = r.Next() % 2 == 0,
+                            rotation_amount = r.Next(0, 3599) / 10.0f,
+                            rotation = r.Next(0, 3599) / 10.0f,
+                            reduction_rate = r.Next(0, 100) / 100f,
+                            tail_length = r.Next(1, 3600),
+                            fill = r.Next() % 2 == 0,
+                            color = Color.FromArgb(r.Next(0, 255), r.Next(0, 255), r.Next(0, 255))
+                        };
+                        if (r.Next() % 5 == 0)
+                            use += Decode_from_Hash(hash.Skip(use).ToArray(), mc);
+                        target_top.AddChild(mc);
+                        break;
+                    }
+                    case 3:
+                    {
+                        var mc = new MC_Star()
+                        {
+                            name = (current_id++).ToString(),
+                            radius = r.Next(1, pictureBox1.Height * 5) / 10.0f,
+                            has_frame = r.Next() % 2 == 0,
+                            rotate = r.Next() % 2 == 0,
+                            rotation_amount = r.Next(0, 3599) / 10.0f,
+                            rotation = r.Next(0, 3599) / 10.0f,
+                            color = Color.FromArgb(r.Next(0, 255), r.Next(0, 255), r.Next(0, 255))
+                        };
+                        if (r.Next() % 5 == 0)
+                            use += Decode_from_Hash(hash.Skip(use).ToArray(), mc);
+                        target_top.AddChild(mc);
+                        break;
+                    }
+                    case 4:
+                    {
+                        var mc = new MC_Hexagram()
+                        {
+                            name = (current_id++).ToString(),
+                            radius = r.Next(1, pictureBox1.Height * 5) / 10.0f,
+                            has_frame = r.Next() % 2 == 0,
+                            rotate = r.Next() % 2 == 0,
+                            rotation_amount = r.Next(0, 3599) / 10.0f,
+                            rotation = r.Next(0, 3599) / 10.0f,
+                            color = Color.FromArgb(r.Next(0, 255), r.Next(0, 255), r.Next(0, 255))
+                        };
+                        if (r.Next() % 5 == 0)
+                            use += Decode_from_Hash(hash.Skip(use).ToArray(), mc);
+                        target_top.AddChild(mc);
+                        break;
+                    }
+                }
+                if (r.Next() % 4 == 0)
+                    break;
+            }
+            return use;
         }
 
         MC top_node = null;
@@ -528,6 +667,25 @@ namespace MagicCircleMaker
                 ((MC_Tail)target).tail = null;
             button7.Enabled = false;
             Draw();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            bool now = timer1.Enabled;
+            if (now)
+                timer1.Enabled = false;
+            top_node.child = null;
+            byte[] hash = new System.Security.Cryptography.SHA512CryptoServiceProvider().ComputeHash(BitConverter.GetBytes(Environment.TickCount));
+            int used = Decode_from_Hash(hash, top_node);
+            Console.WriteLine(used);
+            treeView1.Nodes.Clear();
+            foreach (var c in top_node.child)
+            {
+                treeView1.Nodes.Add(c.name, c.GetType().ToString());
+                setTree(treeView1.Nodes[c.name]);
+            }
+            if (now)
+                timer1.Enabled = true;
         }
     }
 }

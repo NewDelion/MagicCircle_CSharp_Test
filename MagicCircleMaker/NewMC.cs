@@ -150,7 +150,7 @@ namespace MagicCircleMaker
                         radius = decimal.ToSingle(numericUpDown1.Value),
                         rotate = checkBox1.Checked,
                         rotation = decimal.ToSingle(numericUpDown4.Value),
-                        rotation_amount = decimal.ToSingle(numericUpDown3.Value)
+                        rotation_amount = decimal.ToSingle(numericUpDown3.Value),
                     };
                     break;
                 case 1:
@@ -159,6 +159,7 @@ namespace MagicCircleMaker
                         color = this.color,
                         distance_from_center = decimal.ToSingle(numericUpDown2.Value),
                         radius = decimal.ToSingle(numericUpDown1.Value),
+                        rotation = decimal.ToSingle(numericUpDown4.Value),
                         rotation_amount = decimal.ToSingle(numericUpDown3.Value)
                     };
                     break;
